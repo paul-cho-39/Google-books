@@ -95,12 +95,14 @@ export default class BookService {
    async handleCreateCommentAndBook(data: Data, comment: string) {
       const creator = this.getCreator;
       this.validateComment(comment);
-      await creator.createBookAndComment(data, comment);
+      const newComment = await creator.createBookAndComment(data, comment);
+      return newComment;
    }
-   async handleReplyToComment(parentId: number, comment: string) {
+   async handleReplyToComment(commentId: number, comment: string) {
       const creator = this.getCreator;
       this.validateComment(comment);
-      await creator.replyToComment(parentId, comment);
+      const reply = await creator.replyToComment(commentId, comment);
+      return reply;
    }
    /**
     * Handles both 'deleting' and 'updating' and 'creating' the upvote for the book.

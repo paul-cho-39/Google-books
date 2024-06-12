@@ -1,7 +1,7 @@
 import { MutationCommentParams } from '../types/models/books';
 import useMutateComment from './useMutateComment';
 import useMutateDelete from './useMutateDelete';
-import useMutateUpdateOrReply from './useMutateReply';
+import useMutateUpdateOrReply from './useMutateUpdateComment';
 
 type CommentActionType = 'update' | 'reply' | 'delete';
 
@@ -12,13 +12,11 @@ type CommentActionType = 'update' | 'reply' | 'delete';
  * @returns {Object} An object containing the following properties:
  *   - deleteComment: A mutation hook for deleting an existing comment.
  *   - updateComment: A mutation hook for updating an existing comment.
- *   - replyComment: A mutation hook for replying to an existing comment.
  */
 
 export default function useHandleComments(params: MutationCommentParams) {
    const deleteComment = useMutateDelete(params);
-   const updateComment = useMutateUpdateOrReply(params, 'update');
-   const replyComment = useMutateUpdateOrReply(params, 'reply');
+   const updateComment = useMutateUpdateOrReply(params);
 
-   return { deleteComment, updateComment, replyComment };
+   return { deleteComment, updateComment };
 }

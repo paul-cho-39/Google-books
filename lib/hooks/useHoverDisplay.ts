@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-type HoveredProps = {
+export type HoveredProps = {
    id: string | null;
    hovered: boolean;
    isFloatHovered: boolean;

@@ -1,3 +1,4 @@
+/** TODO: Migrate this to response.d.ts */
 import { BookState, Rating } from '@prisma/client';
 import { GoogleUpdatedFields, Items, Pages } from './googleBookTypes';
 import { BestSellerData, ReviewData } from './nytBookTypes';

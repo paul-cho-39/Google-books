@@ -8,15 +8,7 @@ export type DeleteRatingButtonProps = {
    shouldDisplay: boolean;
 } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'>;
 
-function DeleteRatingButton({
-   handleRemoveMutation,
-   shouldDisplay,
-   ...buttonProps
-}: DeleteRatingButtonProps) {
-   if (!shouldDisplay) {
-      return null;
-   }
-
+function DeleteRatingButton({ handleRemoveMutation, ...buttonProps }: DeleteRatingButtonProps) {
    return (
       <>
          <button

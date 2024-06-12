@@ -6,6 +6,7 @@ import { getSession } from 'next-auth/react';
 import { getBookWidth } from '@/lib/helper/books/getBookWidth';
 import { CustomSession, RateServerTypes, MultipleRatingData } from '@/lib/types/serverTypes';
 import useGetBookById from '@/lib/hooks/useGetBookById';
+import useHandleRating from '@/lib/hooks/useHandleRating';
 import { CategoryRouteParams, RouteParams } from '@/lib/types/routes';
 import { findId, useGetRating } from '@/lib/hooks/useGetRatings';
 
@@ -13,25 +14,24 @@ import refiner, { RefineData } from '@/models/server/decorator/RefineData';
 import BookService from '@/models/server/service/BookService';
 
 import BookImage from '@/components/bookcover/bookImages';
-import { ActiveRating } from '@/components/rating/activeRating';
-import useHandleRating from '@/lib/hooks/useHandleRating';
 import BookActionButton from '@/components/buttons/bookActionButton';
 import PageLayout from '@/components/layout/page/bookPageLayout';
 import useSearchFilter from '@/lib/hooks/useSearchFilter';
 
 import type { NextPageWithLayout } from './../_app';
 import DescriptionSection from '@/components/contents/books/description';
-import ReviewSection from '@/components/contents/books/review';
-import getUserInfo from '@/lib/helper/getUserId';
+import getUserInfo, { getUserName } from '@/lib/helper/getUserId';
 import { BookTopLayout, BookBottomLayout } from '@/components/layout/bookLayout';
-import { string } from 'prop-types';
-import useGetReviews from '@/lib/hooks/useGetReviews';
+import Spinner from '@/components/loaders/spinner';
+// import useGetReviews from '@/lib/hooks/useGetReviews';
 
 const HEIGHT = 225;
 
 const BookMetaDescriptionSection = lazy(
    () => import('@/components/section/bookDescriptionSection')
 );
+const ActiveRatingLazy = lazy(() => import('@/components/rating/activeRating'));
+const ReviewSectionLazy = lazy(() => import('@/components/contents/books/review'));
 
 // when refreshed the serversideProps will fetch the data
 // when navigating between pages and coming back useQuery to check
@@ -41,6 +41,7 @@ const BookPage: NextPageWithLayout<
    const { id, user, placerData } = props;
 
    const { userId, photoUrl } = getUserInfo(user);
+   const currentUserName = getUserName.bySession(user);
 
    const router = useRouter();
    const { filter } = useSearchFilter(); // returns the current filter
@@ -55,42 +56,24 @@ const BookPage: NextPageWithLayout<
       initialData: placerData,
    });
 
-   // this is used for initializing the rating
+   // used for initializing the rating
    const userRatingData = useMemo(
       () => findId(allRatingData, userId as string),
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [allRatingData]
    );
 
-   // console.log('---------INSIDE THE MAIN PAGE-----------');
-   // console.log('INSIDE THE MAIN, the data will be: ', allRatingData);
-
-   // const userRatingData = findId(allRatingData, userId as string);
-
-   const [selectedRating, setSelectedRating] = useState<null | number>(
-      userRatingData?.ratingInfo?.ratingValue || 0
-   );
-
-   console.log('---------INSIDE THE MAIN PAGE-----------');
-   // console.log('For the book', id, 'THE SELECTED RATING IS: ', selectedRating);
-   // console.log('USER RATING DATA', id, '(not useState but the value for) IS: ', selectedRating);
-   // console.log('IS THE BOOK IN LIBRARY AFTER THE COMMENT?: ', allRatingData);
-   // console.log('THE DATA SHOULD BE DEFINED: ', data);
-
    // ALTER THIS IF THE LIBRARY DOES NOT CHANGE
    const params = {
       bookId: id,
       userId: userId as string,
       inLibrary: allRatingData?.inLibrary!,
+      prevRatingData: userRatingData,
    };
 
-   console.log('the data currently is: ', data);
-
-   const { handleMutation, handleRemoveMutation, currentRatingData } = useHandleRating(
+   // takes care of all rating logic in this hook
+   const handleRating = useHandleRating(
       {
-         // bookId: id,
-         // userId: userId as string,
-         // inLibrary: allRatingData?.inLibrary!,
          ...params,
          prevRatingData: userRatingData,
       },
@@ -98,10 +81,7 @@ const BookPage: NextPageWithLayout<
       allRatingData
    );
 
-   // const { data: reviews } = useGetReviews(id, 1);
-   // console.log('HERE IS THE DATA: ', reviews.data);
-
-   const ratingTitle = !userRatingData ? 'Rate this book' : 'Rating saved';
+   const ratingValue = userRatingData?.ratingInfo?.ratingValue;
 
    return (
       <PageLayout isLoading={isLoading} title={data?.volumeInfo?.title}>
@@ -126,18 +106,14 @@ const BookPage: NextPageWithLayout<
                      />
                   )}
                </div>
-               <ActiveRating
-                  ratingTitle={ratingTitle}
-                  selectedRating={selectedRating}
-                  handleMutation={handleMutation}
-                  handleRemoveMutation={handleRemoveMutation}
-                  setSelectedRating={setSelectedRating}
-                  // display remove rating
-                  shouldDisplay={!!userRatingData}
-                  userId={userId}
-                  router={router}
-                  size='large'
-               />
+               <Suspense fallback={<Spinner size='md' />}>
+                  <ActiveRatingLazy
+                     userId={userId}
+                     ratingValue={ratingValue}
+                     handleResult={handleRating}
+                     shouldDisplay={!!userRatingData}
+                  />
+               </Suspense>
             </div>
             <Suspense fallback={<div></div>}>
                <BookMetaDescriptionSection
@@ -147,14 +123,21 @@ const BookPage: NextPageWithLayout<
                />
             </Suspense>
          </BookTopLayout>
+
+         {/* TODO: Suspense this part as well */}
          <BookBottomLayout>
             <DescriptionSection description={data?.volumeInfo?.description} />
-            <ReviewSection
-               rating={currentRatingData?.ratingInfo?.ratingValue || 0}
-               avatarUrl={photoUrl}
-               params={params}
-               bookData={data}
-            />
+            <Suspense fallback={<Spinner size='md' />}>
+               <ReviewSectionLazy
+                  avatarUrl={photoUrl}
+                  currentUserName={currentUserName as string}
+                  params={params}
+                  bookData={data}
+                  currentRatingValue={ratingValue}
+                  handleRatingMutation={handleRating.handleMutation}
+                  allRatingInfo={allRatingData?.ratingInfo}
+               />
+            </Suspense>
          </BookBottomLayout>
       </PageLayout>
    );

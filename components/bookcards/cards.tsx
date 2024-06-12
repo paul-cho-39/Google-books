@@ -19,7 +19,7 @@ const Cards: React.FunctionComponent<{
 
    return (
       <>
-         <MyToaster isAdded={toasterAction && toasterAction} />
+         <MyToaster shouldDisplayIcon isAdded={toasterAction && toasterAction} />
          <div className=''>
             <TotalResults filter={filter} result={totalItems} />
             <Divider />

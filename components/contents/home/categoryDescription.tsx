@@ -60,9 +60,8 @@ const CategoryDescription = ({
                      as={`/books/${id}`}
                      href={{ pathname: '/books/[slug]/', query: routeQuery }}
                      description={description}
-                     descriptionLimit={250}
-                     lineClamp='line-clamp-4'
-                     className='text-xs'
+                     descriptionLimit={200}
+                     textSize='text-xs'
                   />
                </Suspense>
             </div>

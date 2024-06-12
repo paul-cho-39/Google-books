@@ -11,7 +11,7 @@ interface PreviewReviewSectionProps extends UserAvatarProps {
 
 const PreviewReviewSection = ({ scrollToElement, ...props }: PreviewReviewSectionProps) => {
    return (
-      <section id='Leave_reviews'>
+      <section id='preview_review'>
          <Divider />
          {/* should be relative */}
          <SectionHeader title='Ratings & Reviews' />

@@ -25,7 +25,7 @@ const Star: React.FunctionComponent<StarProps> = ({ fillPercentage, size = 'smal
             style={{ width: `${fillPercentage}%` }}
             className={`overflow-hidden absolute ${icon}`}
          >
-            <StarIcon className={`text-yellow-400 ${icon}`} />
+            <StarIcon className={`text-yellow-300 ${icon}`} />
          </div>
       </div>
    );

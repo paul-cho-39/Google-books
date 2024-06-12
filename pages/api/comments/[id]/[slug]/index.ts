@@ -11,15 +11,13 @@ interface RequestBodyParams {
 
 export default async function addComment(req: NextApiRequest, res: NextApiResponse) {
    if (req.method === 'POST') {
-      console.log('---------TESTING INSIDE THE COMMENT-----------');
       const { id: userId, slug: bookId } = req.query;
       const { data, comment } = req.body as RequestBodyParams;
       const service = new BookService(userId as string, bookId as string);
 
       try {
-         service.handleCreateCommentAndBook(data, comment);
-
-         const response = createApiResponse(null, {
+         const newComment = await service.handleCreateCommentAndBook(data, comment);
+         const response = createApiResponse(newComment, {
             message: 'Successfully added comment',
          });
          return res.status(201).json(response);

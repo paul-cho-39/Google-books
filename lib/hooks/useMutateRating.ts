@@ -16,8 +16,8 @@ import { Method } from '../types/fetchbody';
  * @example
  * const { mutation } = useMutateRatings<'create'>(params, 'create')
  *
- * Custom hook for mutating ratings and setting optimistic rating updates depending on the ActionType.
- * If the book is not in the library, it will 'create' the book, otherwise it will 'update' the rating.
+ * Custom hook for mutating ratings and setting optimistic rating updates depending on the `ActionType`.
+ * If the book is not in the library, it will `create` the book, otherwise it will `update` the rating.
  *
  * @param {Object} config Configuration object for this hook
  * @param {Object} config.params { userId, bookId, inLibrary, prevRatingData }
@@ -60,7 +60,7 @@ export default function useMutateRatings<ActionType extends MutationRatingAction
                rating = 0;
             }
 
-            // returns the current rating
+            // returns the current rating being mutated
             rating = getRatingFromMutation(data, action, prevRatingData);
 
             // ---------- SETTING OPTIMISITC DATA----------
@@ -73,11 +73,13 @@ export default function useMutateRatings<ActionType extends MutationRatingAction
                inLibrary,
             });
 
+            // set data for a single rating data payload
             queryClient.setQueryData<SingleRatingData>(
                queryKeys.ratingsByBookAndUser(bookId, userId),
                optimisticData
             );
 
+            // set data for all rating data payload for related 'bookId'
             setMultipleQueryData(queryClient, {
                action: action,
                bookId: bookId,

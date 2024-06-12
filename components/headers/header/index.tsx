@@ -7,7 +7,7 @@ export type MetaTag = {
    key?: string;
 };
 
-interface NextHeadProps {
+export interface NextHeadProps {
    title: string;
    metaTags: MetaTag[];
 }

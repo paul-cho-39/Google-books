@@ -4,7 +4,7 @@ import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import DeleteButton from './deleteButton';
 import { userActionButtons } from '@/utils/userActionButton';
 import { UserActionButtonProps } from '@/lib/types/models/books';
-import { DeleteBookContent } from '../modal/deletebookcontent';
+import { DeleteContent } from '../modal/deleteContent';
 import { LIBRARY_DURATION } from '@/constants/throttle';
 
 // mobile version of adding the book to the library
@@ -52,7 +52,7 @@ const PopOverButtons = ({ userId, book }: UserActionButtonProps) => {
                         <div className='w-full'>
                            <div className='w-full flex flex-row'>
                               <h2 className='pl-12 text-xl flex-grow text-center p-2 font-medium dark:text-slate-200 text-slate-800'>
-                                 Delete Book
+                                 Choose book shelf
                               </h2>
                               <button
                                  onClick={() => close()}
@@ -99,7 +99,13 @@ const PopOverButtons = ({ userId, book }: UserActionButtonProps) => {
                               </div>
                            </div>
                            {/* is hidden until clicking the delete button */}
-                           <DeleteBookContent toggleHide={toggleHide} isHidden={isHidden}>
+                           <DeleteContent
+                              content={
+                                 'All data will be lost containing this book. Are you sure you want to delete the book?'
+                              }
+                              toggleModal={toggleHide}
+                              showModal={isHidden}
+                           >
                               <DeleteButton
                                  book={book}
                                  userId={userId}
@@ -110,7 +116,7 @@ const PopOverButtons = ({ userId, book }: UserActionButtonProps) => {
                                        }, LIBRARY_DURATION);
                                  }}
                               />
-                           </DeleteBookContent>
+                           </DeleteContent>
                         </div>
                      </Popover.Panel>
                   </Transition.Child>

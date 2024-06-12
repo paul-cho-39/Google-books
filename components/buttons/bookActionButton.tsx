@@ -30,7 +30,9 @@ const BookActionButton = ({ book, userId, className }: UserActionProps) => (
          className='-top-[1.25rem] relative inline-flex items-center rounded-r-2xl border border-slate-400 bg-white dark:bg-slate-700 px-2 py-2 text-sm font-medium text-gray-500 dark:text-slate-200 hover:bg-gray-50 focus:z-10 focus:border-black focus:outline-none focus:ring-1 focus:ring-black'
          signedInActiveButton={
             <Suspense fallback={<ButtonSkeleton />}>
+               {/* for mobile version */}
                <PopOverButtons book={book} userId={userId as string} />
+               {/* menu button for medium or larger screen */}
                <MenuButtons book={book} userId={userId as string} />
             </Suspense>
          }

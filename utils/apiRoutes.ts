@@ -28,7 +28,7 @@ const API_ROUTES = {
       DELETE: (userId: string, bookId: string, idx: string) =>
          `${BASE_PATH}/${DOMAIN_COMMENT}/${userId}/${bookId}/${idx}`,
       UPVOTE: (userId: string, bookId: string, idx: string) =>
-         `${BASE_PATH}/${DOMAIN_COMMENT}/${userId}/${bookId}/${idx}`,
+         `${BASE_PATH}/${DOMAIN_COMMENT}/${userId}/${bookId}/${idx}/upvote`,
       UPDATE_COMMENT: (id: string, userId: string) =>
          `${BASE_PATH}/${DOMAIN_COMMENT}/${id}/${userId}/update`,
    },

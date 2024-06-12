@@ -26,7 +26,7 @@ const BookDescriptionSection = ({ data, allRatingData, userId }: BookDescription
 
    return (
       <>
-         <MyToaster isAdded={toasterAction && toasterAction} />
+         <MyToaster shouldDisplayIcon isAdded={toasterAction && toasterAction} />
          <div className='flex flex-col justify-start px-2 gap-y-2 md:col-span-2'>
             {userId && <FilterStatus bookId={data.id} library={databooks} />}
             <BookTitle

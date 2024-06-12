@@ -1,31 +1,27 @@
 import API_ROUTES from '@/utils/apiRoutes';
 import apiRequest from '@/utils/fetchData';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MutationBase, MutationCommentParams } from '../types/models/books';
+import { AddCommentBody, MutationBase, MutationCommentParams } from '../types/models/books';
 import queryKeys from '@/utils/queryKeys';
+import { AddedCommentResponseData } from '../types/response';
 
-export default function useMutateUpdateOrReply(
-   params: MutationCommentParams,
-   action: 'update' | 'reply'
-) {
+export default function useMutateUpdateComment(params: MutationCommentParams) {
    const { bookId, pageIndex, parentId, userId, commentId } = params;
    const queryClient = useQueryClient();
-   const url =
-      action === 'update'
-         ? API_ROUTES.COMMENTS.UPDATE_COMMENT(commentId.toString(), userId)
-         : API_ROUTES.COMMENTS.REPLY(userId, bookId, parentId.toString());
+   const url = API_ROUTES.COMMENTS.UPDATE_COMMENT(commentId.toString(), userId);
 
    return useMutation(
-      (data: { comment: string }) =>
+      (data: AddCommentBody) =>
          apiRequest({
             apiUrl: url,
             method: 'POST',
             data: data,
          }),
       {
+         onMutate: (data) => {},
          // on settle invalidate and refetch the comments again
          onSettled: () =>
-            queryClient.invalidateQueries(queryKeys.commentsByBook(bookId, pageIndex.toString())),
+            queryClient.invalidateQueries(queryKeys.commentsByBook(bookId, pageIndex)),
       }
    );
 }

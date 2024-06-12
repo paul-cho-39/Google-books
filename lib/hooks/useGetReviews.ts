@@ -14,20 +14,23 @@ export default function useGetReviews(bookId: string, page: number) {
    }
    const idx = page.toString();
 
-   return useQuery<CommentResponseData, ErrorResponse, CommentPayload[]>(
+   return useQuery<CommentResponseData, ErrorResponse, CommentPayload>(
       queryKeys.commentsByBook(bookId, page),
       async () => {
-         console.log('FETCHING AGAIN');
-         return await fetcher(API_ROUTES.COMMENTS.GET_COMMENTS(bookId, idx), {
+         const res = await fetcher(API_ROUTES.COMMENTS.GET_COMMENTS(bookId, idx), {
             method: 'GET',
          });
+
+         return res.data;
       },
       {
          enabled: !!bookId,
          keepPreviousData: true,
-         select: (data) => data.data,
+         // select: (data) => data.data,
          refetchIntervalInBackground: true,
          refetchOnReconnect: true,
+         retry: 7,
+         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // exponential back-off
       }
    );
 }
@@ -35,4 +38,4 @@ export default function useGetReviews(bookId: string, page: number) {
 // bookId
 
 // ensure that the page number is not equal to 0
-function checkPageNumber() {}
+// function checkPageNumber() {}

@@ -5,9 +5,14 @@ import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+// progress bar
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import '../styles/globals.css';
+
+// swiperCSS
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 import ThemeProvider from '@/lib/context/ThemeContext';
 
@@ -60,7 +65,7 @@ export const queryClient = new QueryClient({
    },
 });
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps }) {
    // defaults to the sidebar open when application starts
    const [isSidebarOpen, setSidebarOpen] = useState(true);
    const { session, ...otherProps } = pageProps;

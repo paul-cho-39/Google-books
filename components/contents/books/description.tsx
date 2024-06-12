@@ -8,6 +8,7 @@ interface DescriptionSectionProps {
 }
 
 const DescriptionSection = ({ description }: DescriptionSectionProps) => {
+   console.log('DESCRIPTION IS: ', description);
    return (
       <section id='description'>
          <div role='contentinfo' id='book-info' className='my-4 w-full py-2 lg:my-12'>

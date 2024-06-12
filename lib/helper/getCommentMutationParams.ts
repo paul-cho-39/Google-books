@@ -1,9 +1,9 @@
 import { UseQueryResult } from '@tanstack/react-query';
-import { CommentPayload, ErrorResponse } from '../types/response';
+import { CommentData, CommentPayload, ErrorResponse } from '../types/response';
 import { BaseIdParams, MutationCommentParams } from '../types/models/books';
 
 function getMutationParams(
-   result: CommentPayload,
+   result: CommentData,
    params: BaseIdParams,
    pageIndex: number
 ): MutationCommentParams {

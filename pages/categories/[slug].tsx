@@ -1,4 +1,12 @@
-import { ReactElement, Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+   ReactElement,
+   Suspense,
+   lazy,
+   useCallback,
+   useEffect,
+   useRef,
+   useState,
+} from 'react';
 import { useRouter } from 'next/router';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import classNames from 'classnames';
@@ -21,7 +29,7 @@ import { CategoryQualifiers } from '@/models/_api/fetchNytUrl';
 import { capitalizeWords } from '@/lib/helper/transformChar';
 
 import { CategoryGridLarge, CategoryGridSmall } from '@/components/contents/category/categoryGrids';
-import { BookImageSkeleton, DescriptionSkeleton } from '@/components/loaders/bookcardsSkeleton';
+import { DescriptionSkeleton } from '@/components/loaders/bookcardsSkeleton';
 import SingleOrMultipleAuthors from '@/components/bookcover/authors';
 import { Divider } from '@/components/layout/dividers';
 import BookTitle from '@/components/bookcover/title';
@@ -31,7 +39,7 @@ import useImageLoadTracker from '@/lib/hooks/useImageLoadTracker';
 import BookImage from '@/components/bookcover/bookImages';
 
 import type { NextPageWithLayout } from './../_app';
-import Spinner from '@/components/loaders/spinner';
+import LoadingPage from '@/components/layout/loadingPage';
 
 const CategoryDescription = lazy(() => import('@/components/contents/home/categoryDescription'));
 
@@ -125,17 +133,11 @@ const BookCategoryPages: NextPageWithLayout<
       `${capitalizeWords(category as string)} Best Sellers (${bestSellers.published_date})`;
 
    if (isLoading) {
-      return (
-         <div aria-busy={true} className='w-full min-h-screen dark:bg-slate-800'>
-            <div className='lg:py-16 py-20 dark:bg-slate-800'>
-               <Spinner size='lg' color='blue' />
-            </div>
-         </div>
-      );
+      return <LoadingPage />;
    }
 
    return (
-      <>
+      <React.Fragment>
          {googleData.isSuccess && googleData && (
             <CategoryGridLarge
                currentPage={currentPage}
@@ -242,7 +244,7 @@ const BookCategoryPages: NextPageWithLayout<
                </CategoryGridSmall>
             </>
          )}
-      </>
+      </React.Fragment>
    );
 };
 
@@ -286,6 +288,7 @@ export const getStaticProps: GetStaticProps<{
    };
 };
 
+// basic layout for the page
 BookCategoryPages.getLayout = function getLayout(page: ReactElement) {
    const { isLoading, category } = page.props as { isLoading: boolean; category: string };
 

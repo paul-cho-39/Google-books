@@ -7,6 +7,12 @@ interface DeleteButtonProps extends UserActionButtonProps {
    closeModal?: Dispatch<SetStateAction<boolean>>; // only for medium size screen or larger
 }
 
+/**
+ * @Component
+ * @description This component is specific to deleting a book from user's library.
+ * @param param0
+ * @returns
+ */
 const DeleteButton = ({ userId, book, close, closeModal }: DeleteButtonProps) => {
    const { id, volumeInfo: _ } = book;
    const body = { id, userId };

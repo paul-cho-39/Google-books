@@ -79,8 +79,6 @@ html {
     border-radius: 10px;
   }
 }
-  
-
 
 html,
 body {
@@ -142,3 +140,4 @@ a {
 .react-datepicker__day--outside-month {
   opacity: 0.2;
 }
+

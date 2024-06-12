@@ -46,7 +46,7 @@ export default class BookCreator extends Books {
    }
 
    async createBookAndComment(data: Data, content: string) {
-      await prisma.$transaction(async (tx) => {
+      const comment = await prisma.$transaction(async (tx) => {
          try {
             // ensure that there is session
             await tx.session.findFirstOrThrow({
@@ -66,7 +66,7 @@ export default class BookCreator extends Books {
             }
 
             // create the comment after book has been created
-            await tx.comment.create({
+            const comment = await tx.comment.create({
                data: {
                   bookId: this.bookId,
                   userId: this.userId,
@@ -74,18 +74,22 @@ export default class BookCreator extends Books {
                   parentId: null, // parentId is set to null because there is no replied comment
                },
             });
+
+            return comment;
          } catch (err) {
             throw new Error('Error while creating a new commnet');
          }
       });
+
+      return comment;
    }
    /**
     *
     * @param parentId - the parentId should be the 'id' of the current comment
     * @param content - users content information
     */
-   async replyToComment(parentId: number, content: string) {
-      await prisma.$transaction(async (tx) => {
+   async replyToComment(commentId: number, content: string) {
+      const reply = await prisma.$transaction(async (tx) => {
          // ensure that there is session and top comment in the database
          try {
             await tx.session.findFirstOrThrow({
@@ -93,10 +97,10 @@ export default class BookCreator extends Books {
             });
 
             const parentComment = await tx.comment.findUniqueOrThrow({
-               where: { id: parentId },
+               where: { id: commentId },
             });
 
-            await tx.comment.create({
+            const repliedComment = await tx.comment.create({
                data: {
                   userId: this.userId,
                   bookId: this.bookId,
@@ -104,10 +108,14 @@ export default class BookCreator extends Books {
                   parentId: parentComment?.id,
                },
             });
+
+            return repliedComment;
          } catch (err) {
             throw new Error('Error while creating a reply to a comment');
          }
       });
+
+      return reply;
    }
 
    /**

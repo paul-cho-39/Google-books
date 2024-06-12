@@ -38,7 +38,15 @@ function isThumbnailAvailable<T extends ImageLinks | ImageLinksPairs>(image: T |
 export function removeHtmlTags(description: string | undefined) {
    if (!description) return;
 
-   const breakDescription = description.split('<br><br>');
+   // const breakDescription = description.split('<br><br>');
+   // const regex = /(<[^>]*>)/gi;
+   // return breakDescription.map((description) => description.replaceAll(regex, '').trim());
+   // breaks line for each of the breaks
+
+   const normalizedDescription = description.replace(/<br\s*\/?>/gi, '\n');
+
+   const breakDescription = normalizedDescription.split('\n');
+
    const regex = /(<[^>]*>)/gi;
    return breakDescription.map((description) => description.replaceAll(regex, '').trim());
 }

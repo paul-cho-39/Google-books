@@ -6,7 +6,7 @@ import { encodeRoutes } from '@/utils/routes';
 type BookTitleAndAuthorProps = Pick<BookCardProps, 'book' | 'query'>;
 
 const BookTitleAndAuthor = ({ book, query }: BookTitleAndAuthorProps) => (
-   <div className='row-span-3'>
+   <div className='row-span-3 mb-6 md:mb-0'>
       <div className='row-start-1 row-end-2 md:max-w-sm'>
          <BookTitle
             id={book.id}

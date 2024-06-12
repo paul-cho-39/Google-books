@@ -1,47 +1,87 @@
-import { UserAvatarProps } from '@/components/icons/avatar';
-import useGetReviews from '@/lib/hooks/useGetReviews';
-import { CommentPayload, ErrorResponse } from '@/lib/types/response';
 import Comment, { CommentProps } from '@/components/comments/comment';
-import { useState } from 'react';
-import { UseQueryResult } from '@tanstack/react-query';
+import { ForwardRefRenderFunction, forwardRef, useMemo, useState } from 'react';
 import getMutationParams from '@/lib/helper/getCommentMutationParams';
 import { BaseIdParams } from '@/lib/types/models/books';
+import useGetReviews from '@/lib/hooks/useGetReviews';
+
+import Pagination, { PaginationProps } from '@/components/headers/pagination';
+import LoadingPage from '@/components/layout/loadingPage';
+import { RatingInfo } from '@/lib/types/serverTypes';
+import addRatingToComments from '@/lib/helper/addRatingsToComment';
 
 interface DisplayReviewSectionProps extends Omit<CommentProps<BaseIdParams>, 'comment'> {
-   reviewsReuslt: UseQueryResult<CommentPayload[], ErrorResponse>;
    pageIndex: number;
    scrollToComment: () => void;
+   currentUserName: string;
+   handlePageChange: PaginationProps['onPageChange'];
+   allRatingInfo: RatingInfo[] | undefined;
 }
 
-const DisplayReviewSection = ({
-   scrollToComment,
-   reviewsReuslt,
-   pageIndex,
-   ...props
-}: DisplayReviewSectionProps) => {
-   // TODO: add isLoading & isError for more responsive state
-   //    TODO: add total number of comments
-   const { data: reviews, isLoading, isError } = reviewsReuslt;
-   console.log('the reviews are: ', reviews);
+/**
+ *
+ * @param props
+ * @param ref
+ * @returns
+ */
+
+const DisplayReviewSection: ForwardRefRenderFunction<HTMLDivElement, DisplayReviewSectionProps> = (
+   props,
+   ref
+) => {
+   const { scrollToComment, pageIndex, handlePageChange, ...rest } = props;
+
+   const {
+      data: reviewData,
+      status,
+      isLoading,
+      isError,
+   } = useGetReviews(props.params.bookId, pageIndex);
+
+   const ITEMS_PER_PAGE = 10;
+   const totalComments = reviewData?.total || 0;
+
+   // const reviews = reviewData?.comments;
+
+   const reviews = useMemo(
+      () => addRatingToComments(props.allRatingInfo, reviewData?.comments),
+      [props.allRatingInfo, reviewData?.comments]
+   );
+
+   if (isLoading) {
+      return <LoadingPage />;
+   }
 
    return (
       <section id='display_review'>
-         <div className='py-6'>
+         <div ref={ref} className='py-2'>
+            {/* No Comments here */}
             {!reviews ? (
                <NoCommentToDisplay scrollToComment={scrollToComment} />
             ) : (
-               <div className='flex flex-col my-6 gap-y-12'>
+               <ul role='listitem' className='flex flex-col my-6 gap-y-12'>
                   {reviews.map((review) => (
-                     <Comment
-                        {...props}
-                        params={getMutationParams(review, props.params, pageIndex)}
+                     <article
                         key={review.id}
-                        comment={review}
-                     />
-
+                        aria-roledescription='review'
+                        className='first-of-type:border-none border-t-2 border-spacing-1 border-gray-500 dark:border-gray-400'
+                     >
+                        <Comment
+                           {...rest}
+                           params={getMutationParams(review, props.params, pageIndex)}
+                           comment={review}
+                        />
+                     </article>
                      // if the user replies
                   ))}
-               </div>
+               </ul>
+            )}
+            {reviews && totalComments > 10 && (
+               <Pagination
+                  currentPage={pageIndex}
+                  totalItems={totalComments}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  onPageChange={handlePageChange}
+               />
             )}
          </div>
       </section>
@@ -65,4 +105,4 @@ const NoCommentToDisplay = (props: Pick<DisplayReviewSectionProps, 'scrollToComm
    );
 };
 
-export default DisplayReviewSection;
+export default forwardRef(DisplayReviewSection);

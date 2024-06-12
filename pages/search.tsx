@@ -22,8 +22,6 @@ const Cards = lazy(() => import('@/components/bookcards/cards'));
 export default function Search(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
    const { userId, session } = props;
 
-   console.log('THE SESSION HERE IS: ', userId);
-
    // routed from search from /headers
    // decode the search here
    const { search, filter } = useDecodeSearchRoute();
@@ -110,7 +108,6 @@ export default function Search(props: InferGetServerSidePropsType<typeof getServ
 
 export const getServerSideProps = async (context: any) => {
    const session = await getSession(context);
-   console.log('THE SESSION INSIDE THE SEARCH PAGE: ', session);
 
    const user = session?.user as CustomSession;
    const userId = user?.id || null;

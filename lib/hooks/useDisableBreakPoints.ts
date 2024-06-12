@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 
 const LARGE_BREAK_POINT = 1023;
 
+/**
+ * @Component
+ * @description - Returns true if the size is bigger than 'size'
+ * @param size
+ * @returns {boolean} isDisabled
+ */
 export const useDisableBreakPoints = (size: number = LARGE_BREAK_POINT) => {
    const [isDisabled, setIsDisabled] = useState(false);
 

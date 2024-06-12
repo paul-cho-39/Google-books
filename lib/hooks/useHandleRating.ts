@@ -12,14 +12,6 @@ function useHandleRating(
    data: Items<any>,
    currentAllRatingData: MultipleRatingData | null | undefined
 ) {
-   // ----------------TESTING-------------------
-   const queryClient = useQueryClient();
-   // const allRatingData = queryClient.getQueryData(queryKeys.optimisticRatingsByBookAndUser(params.bookId, params.userId));
-
-   const allRatingData = queryClient.getQueryData(queryKeys.ratingsByBook(params.bookId));
-
-   // ----------------TESTING-------------------
-
    const {
       mutation: { mutate: createMutation, isLoading: isCreateLoading, isError: isCreateError },
       currentRatingData,
@@ -33,18 +25,23 @@ function useHandleRating(
       mutation: { mutate: removeMutation, isLoading: isRemoveLoading, isError: isRemoveError },
    } = useMutateRatings<'remove'>(params, 'remove');
 
-   const handleMutation = (rating: number) => {
+   const handleMutation = (rating: number, controlled: boolean) => {
       // create a book based on all ratings not user book rating
-      rating += 1;
+      // rating += 1;
+      // if the rating is controlled from parent component it shouldnt increment
+      rating = !controlled ? rating + 1 : rating;
+
       const notCreated = currentAllRatingData && !currentAllRatingData.inLibrary;
       const bookData = getBodyFromFilteredGoogleFields(data);
 
+      // new rating data requires adding book data payload
       const createBody = { bookData, rating };
       const updateBody = { rating };
 
       notCreated ? createMutation(createBody) : updateMutation(updateBody);
    };
 
+   // removes comments
    const handleRemoveMutation = () => {
       removeMutation(null);
    };
@@ -52,4 +49,7 @@ function useHandleRating(
    return { handleMutation, handleRemoveMutation, currentRatingData };
 }
 
+type UseHandleRatingResult = ReturnType<typeof useHandleRating>;
+
+export type { UseHandleRatingResult };
 export default useHandleRating;

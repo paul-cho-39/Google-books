@@ -120,16 +120,17 @@ export interface MutationCommentParams extends Omit<MutationBase, 'prevRatingDat
 
 export type MutationUpvoteParams = Omit<MutationCommentParams, 'parentId'>;
 export type MutationAddCommentParams = Omit<MutationUpvoteParams, 'commentId'>;
-// export interface MultipleQueryDataParams extends Omit<MutationBase, 'initialData'> {
-//    queryClient: QueryClient;
-//    context:
-//       | {
-//            prevRatingData: SingleRatingData | undefined;
-//            action: MutationRatingActionType;
-//         }
-//       | undefined;
-//    newRating: number | undefined;
-// }
+// export type MutationAddCommentParams = Omit<MutationCommentParams, 'commentId' | 'parentId'> & { parentId ?: number }
+
+// comments body type
+// base comment type
+export type ActionCommentType = 'review' | 'comment';
+export type AddCommentBody = { comment: string };
+export type NewCommentBody = AddCommentBody & { data: Data };
+
+export type CommentDataType<AType extends ActionCommentType> = AType extends 'review'
+   ? AddCommentBody
+   : NewCommentBody;
 
 export interface MultipleQueryDataParams extends MutationBase {
    action: MutationRatingActionType;

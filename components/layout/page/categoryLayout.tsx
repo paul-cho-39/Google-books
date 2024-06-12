@@ -17,7 +17,7 @@ const CategoryLayout = ({ category, children, className }: CategoryLayoutProps) 
          <div
             className={classNames(
                className,
-               'scrollbarX lg:overflow-x--hidden px-1 py-1 md:max-w-2xl lg:px-2 lg:py-2 lg:max-w-4xl'
+               'scrollbarX lg:overflow-x--hidden px-1 py-1 md:max-w-2xl lg:px-2 lg:py-2 lg:max-w-4xl xl:max-w-5xl'
             )}
          >
             {children}
